@@ -9,5 +9,5 @@ api = Api(app)
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
-from .views import tarefa_views
+from .views import beer_views
 from .models import beer_model
