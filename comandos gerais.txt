@@ -1,0 +1,84 @@
+
+CREATE TABLE BestTemperatureBeers(
+	id_best_beer_temperature INT AUTO_INCREMENT UNIQUE,
+	temperature INT,
+	PRIMARY KEY (id_best_beer_temperature)
+);
+
+CREATE TABLE Beers(
+	id_beer INT AUTO_INCREMENT UNIQUE,
+	style_beer VARCHAR(30),
+	id_best_beer_temperature int,
+	PRIMARY KEY (id_beer),
+	FOREIGN KEY (id_best_beer_temperature) REFERENCES BestTemperatureBeers(id_best_beer_temperature)
+	
+);
+
+
+INSERT INTO BestTemperatureBeers (id_best_beer_temperature, style_beer, min_best_temperature, max_best_temperature)
+VALUES (1, 'IPA', -7, 10),
+       (2, 'Stout', -10, 13),
+       (3, 'Pilsner', -2, 4),
+       (4, 'Wheat beer', 4, 6),
+       (5, 'Pale Ale', -6, 7);
+       
+       
+       
+SELECT *, (sum(min_best_temperature+max_best_temperature))/2 AS Average
+from BestTemperatureBeers btb group by id_best_beer_temperature ;
+
+
+SELECT * FROM (SELECT *, (sum(min_best_temperature+max_best_temperature))/2 AS average
+from BestTemperatureBeers btb group by id_best_beer_temperature) t where average = 1.5 order by style_beer desc;
+
+
+export FLASK_APP=src.py
+
+flask db init
+flask db migrate
+flask db upgrade
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+INSERT INTO Beers(id_beer, style_beer, id_best_beer_temperature, created_at, updated_at) VALUES
+(1, 'IPA', 1, NOW(), NOW()),
+(2, 'Stout', 2, NOW(), NOW()),
+(3, 'Pilsner', 3, NOW(), NOW()),
+(4, 'Wheat beer', 4, NOW(), NOW()),
+(5, 'Lager', 5, NOW(), NOW()),
+(6, 'Pale Ale', 6, NOW(), NOW()),
+(7, 'Saison', 7, NOW(), NOW()),
+(8, 'Sour', 8, NOW(), NOW()),
+(9, 'Red Ale', 9, NOW(), NOW()),
+(10, 'Porter', 10, NOW(), NOW());
+
+
+INSERT INTO BestTemperatureBeers (id_best_beer_temperature, style_beer, min_best_temperature, max_best_temperature, created_at, updated_at) VALUES
+(1, 'IPA', 5, 7, NOW(), NOW()),
+(2, 'Pilsner', 4, 6, NOW(), NOW()),
+(3, 'Stout', 6, 8, NOW(), NOW()),
+(4, 'Wheat beer', 4, 5, NOW(), NOW()),
+(5, 'Pale Ale', 5, 6, NOW(), NOW()),
+(6, 'Belgian Ale', 6, 7, NOW(), NOW()),
+(7, 'Brown Ale', 6, 7, NOW(), NOW()),
+(8, 'Lager', 4, 6, NOW(), NOW()),
+(9, 'Porter', 6, 8, NOW(), NOW()),
+(10, 'Saison', 4, 6, NOW(), NOW());
+
+
