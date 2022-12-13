@@ -10,5 +10,5 @@ class BeerSchema(ma.SQLAlchemyAutoSchema):
 
 class BestBeerTemperatureSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
-        model = beer_model.Beers
-        fields = ("id_best_beer_temperature", "style_beer", "min_best_temperature","max_best_temperature", "created_at", "updated_at")
+        model = beer_model.BestTemperatureBeers
+        fields = ("id_best_beer_temperature", "style_beer", "min_best_temperature","max_best_temperature", "average", "created_at", "updated_at")
