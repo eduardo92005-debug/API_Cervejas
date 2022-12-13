@@ -41,7 +41,7 @@ class BeerTemperatureDetail(Resource):
         if beer is None:
             return make_response(jsonify("Not found"), 404)
         else:
-            bts = beer_schema.BestBeerTemperatureSchema()
+            bts = beer_schema.BestBeerTemperatureSchema(many=True)
             return make_response(bts.jsonify(beer), 200)
 
 
