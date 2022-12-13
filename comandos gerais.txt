@@ -82,3 +82,14 @@ INSERT INTO BestTemperatureBeers (id_best_beer_temperature, style_beer, min_best
 (10, 'Saison', 4, 6, NOW(), NOW());
 
 
+
+
+CREATE OR REPLACE VIEW avg_temp_beers AS (
+SELECT *, round(sum(min_best_temperature+max_best_temperature)/2,2)  AS average
+from BestTemperatureBeers btb group by id_best_beer_temperature);
+
+
+select * from avg_temp_beers ;
+
+
+
