@@ -1,6 +1,7 @@
 from flask_restful import Resource
 from flask import jsonify, make_response
 from src import api
+from ..handlers import requests_handlers
 from ..repositories import beer_repository
 from ..schemas import beer_schema
 
@@ -32,7 +33,7 @@ class BeerDetail(Resource):
 class BeerTemperatureList(Resource):
     def get(self):
         beers = beer_repository.list_all_beer_and_average()
-        bs = beer_schema.BestBeerTemperatureSchema(many=True)
+        bs = beer_schema.BestBeerTemperatureSchemaAll(many=True)
         return make_response(bs.jsonify(beers), 200)
 
 class BeerTemperatureDetail(Resource):
@@ -41,8 +42,14 @@ class BeerTemperatureDetail(Resource):
         if beer is None:
             return make_response(jsonify("Not found"), 404)
         else:
-            bts = beer_schema.BestBeerTemperatureSchema(many=True)
-            return make_response(bts.jsonify(beer), 200)
+            bts = beer_schema.BestBeerTemperatureSchemaOne(many=True)
+            bts_json = bts.jsonify(beer)
+            json_list = []
+            for beer_element in bts_json.json:
+                request_response = requests_handlers.request_spotify_service(beer_element["style_beer"])
+                related = beer_element | request_response
+                json_list.append(related)
+            return json_list
 
 
 api.add_resource(BeerList, '/beers')
