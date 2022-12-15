@@ -29,3 +29,4 @@ def list_beer_temperature_by_id(id):
 
 def list_all_beer_and_average():
     return temperature_handler.get_average_table_temperature()
+

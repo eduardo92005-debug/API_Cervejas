@@ -2,8 +2,8 @@ from ..models import beer_model
 from src import db
 from datetime import datetime
 
-def insert_beer(beer):
-    beer_bd = beer_model.Beers(style_beer=beer.style_beer, id_best_beer_temperature=beer.id_best_beer_temperature)
+def insert_beer_temperature(beer):
+    beer_bd = beer_model.BestTemperatureBeers(style_beer=beer.style_beer,min_best_temperature=beer.min_best_temperature,max_best_temperature=beer.max_best_temperature)
     db.session.add(beer_bd)
     db.session.commit()
     return beer_bd

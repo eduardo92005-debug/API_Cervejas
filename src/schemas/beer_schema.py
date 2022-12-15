@@ -19,3 +19,6 @@ class BestBeerTemperatureSchemaAll(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = beer_model.BestTemperatureBeers
         fields = ("id_best_beer_temperature", "style_beer", "min_best_temperature","max_best_temperature", "average", "created_at", "updated_at")
+    style_beer = fields.String(required=True)
+    min_best_temperature = fields.Integer(required=True)
+    max_best_temperature = fields.Integer(required=True)
