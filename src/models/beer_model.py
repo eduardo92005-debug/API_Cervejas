@@ -18,3 +18,4 @@ class Beers(db.Model):
     id_best_beer_temperature = db.Column(db.Integer,db.ForeignKey('BestTemperatureBeers.id_best_beer_temperature', ondelete='CASCADE'))
     created_at = db.Column(db.DateTime, default=datetime.utcnow())
     updated_at = db.Column(db.Date)
+    
