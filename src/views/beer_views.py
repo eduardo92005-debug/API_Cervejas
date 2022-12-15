@@ -5,7 +5,7 @@ from ..handlers import requests_handlers
 from ..repositories import beer_repository
 from ..schemas import beer_schema
 from ..entitys import beer_entity
-from ..services import beer_service
+from ..services import beer_service, beer_temperature_service
 
 
 class BeerList(Resource):
@@ -112,6 +112,62 @@ class BeerList(Resource):
                     return make_response(bs.jsonify(result), 201)
             except Exception as e:
                 return make_response("Check if the data was passed correctly or a bad code: " + str(e), 500)
+
+
+class BeerTemperatureList(Resource):
+    def get(self):
+        """
+            Returns all beers with average temperature
+            ---
+            tags:
+                - beers
+            responses:
+                200:
+                    description: The list of beers
+                    schema:
+                        id: beers
+                        properties:
+                            id_best_beer_temperature:
+                                type: integer
+                                description: The beer best temperature id
+                            style_beer:
+                                type: string
+                                description: The beer style
+                            min_best_temperature:
+                                type: integer
+                                description: The beer min best temperature
+                            max_best_temperature:
+                                type: integer
+                                description: The beer max best temperature
+                            average:
+                                type: integer
+                                description: The beer average temperature
+                            created_at:
+                                type: string
+                                description: The beer creation date
+                            updated_at:
+                                type: string
+                                description: The beer update date
+        """
+        beers = beer_repository.list_all_beer_and_average()
+        bs = beer_schema.BestBeerTemperatureSchemaAll(many=True)
+        return make_response(bs.jsonify(beers), 200)
+    def post(self):
+        bs = beer_schema.BestBeerTemperatureSchemaAll()
+        validate = bs.validate(request.json)
+        if validate:
+            return make_response(jsonify(validate), 400)
+        else:
+            try:
+                style_beer = request.json["style_beer"]
+                min_best_temperature = request.json["min_best_temperature"]
+                max_best_temperature = request.json["max_best_temperature"]
+                new_beer = beer_entity.BeerTemperatureEntity(style_beer, min_best_temperature, max_best_temperature)
+                result = beer_temperature_service.insert_beer_temperature(new_beer)
+                return make_response(bs.jsonify(result), 201)
+            except Exception as e:
+                return make_response("Check if the data was passed correctly or a bad code: " + str(e), 500)
+
 
 
 
@@ -248,48 +304,30 @@ class BeerDetail(Resource):
 
 
     def delete(self, id):
-        pass
-
-
-
-class BeerTemperatureList(Resource):
-    def get(self):
         """
-            Returns all beers with average temperature
+            Delete a beer by id
             ---
             tags:
                 - beers
+            parameters:
+                - in: path
+                  name: id
+                  type: integer
+                  required: true
+                  description: The beer id
             responses:
-                200:
-                    description: The list of beers
-                    schema:
-                        id: beers
-                        properties:
-                            id_best_beer_temperature:
-                                type: integer
-                                description: The beer best temperature id
-                            style_beer:
-                                type: string
-                                description: The beer style
-                            min_best_temperature:
-                                type: integer
-                                description: The beer min best temperature
-                            max_best_temperature:
-                                type: integer
-                                description: The beer max best temperature
-                            average:
-                                type: integer
-                                description: The beer average temperature
-                            created_at:
-                                type: string
-                                description: The beer creation date
-                            updated_at:
-                                type: string
-                                description: The beer update date
+                204:
+                    description: The beer was deleted, no content to show
+                404:
+                    description: The beer was not found
         """
-        beers = beer_repository.list_all_beer_and_average()
-        bs = beer_schema.BestBeerTemperatureSchemaAll(many=True)
-        return make_response(bs.jsonify(beers), 200)
+        beer = beer_repository.list_beer_by_id(id)
+        if beer is None:
+            return make_response(jsonify("Beer ID not found"), 404)
+        else:
+            result = beer_service.delete_beer(beer)
+            return make_response('', 204)
+
 
 class BeerTemperatureDetail(Resource):
     def get(self, temperature):
@@ -348,6 +386,13 @@ class BeerTemperatureDetail(Resource):
                 related = request_response | beer_element
                 json_list.append(related)
             return make_response(json_list,200)
+
+    def put(self,id):
+        pass
+    def delete(self,id):
+        pass
+    
+
 
 
 api.add_resource(BeerList, '/beers')
