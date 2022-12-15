@@ -16,6 +16,6 @@ def update_beer(beer):
     db.session.commit()
     return beer_bd
 
-def delete_beer(beer):
+def delete_beer_temperature(beer):
     db.session.delete(beer)
     db.session.commit()
