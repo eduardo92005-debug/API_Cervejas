@@ -388,9 +388,38 @@ class BeerTemperatureDetail(Resource):
             return make_response(json_list,200)
 
     def put(self,id):
-        pass
+        beer = beer_repository.list_beer_temperature_by_id(id)
+        if beer is None:
+            return make_response(jsonify("Beer ID not found"), 404)
+        else:
+            bs = beer_schema.BestBeerTemperatureSchemaAll()
+            validate = bs.validate(request.json)
+            if validate:
+                return make_response(jsonify(validate), 400)
+            else:
+                try:
+                    id_beer = id
+                    style_beer = request.json["style_beer"]
+                    id_best_beer_temperature = request.json["id_best_beer_temperature"]
+                    check_id_beer_temp = beer_repository.list_beer_temperature_by_id(id_best_beer_temperature)
+                    if check_id_beer_temp is None:
+                        return make_response("The id_best_beer_temperature passed does not exist in the database", 404)
+                    else:
+                        beer.id_beer = id_beer
+                        beer.style_beer = style_beer
+                        beer.id_best_beer_temperature = id_best_beer_temperature
+                        result = beer_service.update_beer(beer)
+                        return make_response(bs.jsonify(result), 200)
+                except Exception as e:
+                    return make_response("Check if the data was passed correctly or a bad code: " + str(e), 500)
+
     def delete(self,id):
-        pass
+        beer = beer_repository.list_beer_temperature_by_id(id)
+        if beer is None:
+            return make_response(jsonify("Beer ID not found"), 404)
+        else:
+            result = beer_temperature_service.delete_beer_temperature(beer)
+            return make_response('', 204)
     
 
 
