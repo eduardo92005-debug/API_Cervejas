@@ -23,5 +23,9 @@ def list_beer_by_temperature(temperature):
     beer = beer.order_by(beer_model.BestTemperatureBeers.style_beer.asc()).all()
     return beer
 
+def list_beer_temperature_by_id(id):
+    beer = beer_model.BestTemperatureBeers.query.filter_by(id_best_beer_temperature=id).first()
+    return beer
+
 def list_all_beer_and_average():
     return temperature_handler.get_average_table_temperature()
