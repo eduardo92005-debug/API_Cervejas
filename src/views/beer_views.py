@@ -6,7 +6,7 @@ from ..repositories import beer_repository
 from ..schemas import beer_schema
 from ..entitys import beer_entity
 from ..services import beer_service, beer_temperature_service
-
+from ..utils import http_utils
 
 class BeerList(Resource):
     def get(self):
@@ -39,7 +39,7 @@ class BeerList(Resource):
         """
         beers = beer_repository.list_beers()
         bs = beer_schema.BeerSchema(many=True)
-        return make_response(bs.jsonify(beers), 200)
+        return make_response(bs.jsonify(beers), http_utils.OK_HTTP_CODE_200)
 
     def post(self):
         """
@@ -98,7 +98,7 @@ class BeerList(Resource):
         bs = beer_schema.BeerSchema()
         validate = bs.validate(request.json)
         if validate:
-            return make_response(jsonify(validate), 400)
+            return make_response(jsonify(validate), http_utils.BAD_REQUEST_HTTP_CODE_400)
         else:
             try:
                 style_beer = request.json["style_beer"]
@@ -111,9 +111,9 @@ class BeerList(Resource):
                     new_beer = beer_entity.Beer(
                         style_beer, id_best_beer_temperature)
                     result = beer_service.insert_beer(new_beer)
-                    return make_response(bs.jsonify(result), 201)
+                    return make_response(bs.jsonify(result), http_utils.CREATED_HTTP_CODE_201)
             except Exception as e:
-                return make_response("Check if the data was passed correctly or a bad code: " + str(e), 500)
+                return make_response("Check if the data was passed correctly or a bad code: " + str(e), http_utils.SERVER_ERROR_HTTP_CODE_500)
 
 
 class BeerTemperatureList(Resource):
@@ -153,7 +153,7 @@ class BeerTemperatureList(Resource):
         """
         beers = beer_repository.list_all_beer_and_average()
         bs = beer_schema.BestBeerTemperatureSchemaAll(many=True)
-        return make_response(bs.jsonify(beers), 200)
+        return make_response(bs.jsonify(beers), http_utils.OK_HTTP_CODE_200)
 
     def post(self):
         """
@@ -221,7 +221,7 @@ class BeerTemperatureList(Resource):
         bs = beer_schema.BestBeerTemperatureSchemaAll()
         validate = bs.validate(request.json)
         if validate:
-            return make_response(jsonify(validate), 400)
+            return make_response(jsonify(validate), http_utils.BAD_REQUEST_HTTP_CODE_400)
         else:
             try:
                 style_beer = request.json["style_beer"]
@@ -231,9 +231,9 @@ class BeerTemperatureList(Resource):
                     style_beer, min_best_temperature, max_best_temperature)
                 result = beer_temperature_service.insert_beer_temperature(
                     new_beer)
-                return make_response(bs.jsonify(result), 201)
+                return make_response(bs.jsonify(result), http_utils.CREATED_HTTP_CODE_201)
             except Exception as e:
-                return make_response("Check if the data was passed correctly or a bad code: " + str(e), 500)
+                return make_response("Check if the data was passed correctly or a bad code: " + str(e), http_utils.SERVER_ERROR_HTTP_CODE_500)
 
 
 
@@ -277,10 +277,10 @@ class BeerDetail(Resource):
         """
         beer = beer_repository.list_beer_by_id(id)
         if beer is None:
-            return make_response(jsonify("Beer ID not found"), 404)
+            return make_response(jsonify("Beer ID not found"), http_utils.NOT_FOUND_HTTP_CODE_404)
         else:
             bs = beer_schema.BeerSchema()
-            return make_response(bs.jsonify(beer), 200)
+            return make_response(bs.jsonify(beer), http_utils.OK_HTTP_CODE_200)
 
     def put(self, id):
         """
@@ -345,12 +345,12 @@ class BeerDetail(Resource):
         """
         beer = beer_repository.list_beer_by_id(id)
         if beer is None:
-            return make_response(jsonify("Beer ID not found"), 404)
+            return make_response(jsonify("Beer ID not found"), http_utils.NOT_FOUND_HTTP_CODE_404)
         else:
             bs = beer_schema.BeerSchema()
             validate = bs.validate(request.json)
             if validate:
-                return make_response(jsonify(validate), 400)
+                return make_response(jsonify(validate), http_utils.BAD_REQUEST_HTTP_CODE_400)
             else:
                 try:
                     id_beer = id
@@ -358,15 +358,15 @@ class BeerDetail(Resource):
                     id_best_beer_temperature = request.json["id_best_beer_temperature"]
                     check_id_beer_temp = beer_repository.list_beer_temperature_by_id(id_best_beer_temperature)
                     if check_id_beer_temp is None:
-                        return make_response("The id_best_beer_temperature passed does not exist in the database", 404)
+                        return make_response("The id_best_beer_temperature passed does not exist in the database", http_utils.NOT_FOUND_HTTP_CODE_404)
                     else:
                         beer.id_beer = id_beer
                         beer.style_beer = style_beer
                         beer.id_best_beer_temperature = id_best_beer_temperature
                         result = beer_service.update_beer(beer)
-                        return make_response(bs.jsonify(result), 200)
+                        return make_response(bs.jsonify(result), http_utils.OK_HTTP_CODE_200)
                 except Exception as e:
-                    return make_response("Check if the data was passed correctly or a bad code: " + str(e), 500)
+                    return make_response("Check if the data was passed correctly or a bad code: " + str(e), http_utils.SERVER_ERROR_HTTP_CODE_500)
 
 
 
@@ -390,10 +390,10 @@ class BeerDetail(Resource):
         """
         beer = beer_repository.list_beer_by_id(id)
         if beer is None:
-            return make_response(jsonify("Beer ID not found"), 404)
+            return make_response(jsonify("Beer ID not found"), http_utils.NOT_FOUND_HTTP_CODE_404)
         else:
             result = beer_service.delete_beer(beer)
-            return make_response('', 204)
+            return make_response('', http_utils.NO_CONTENT_HTTP_CODE_204)
 
 
 class BeerTemperatureDetail(Resource):
@@ -436,11 +436,11 @@ class BeerTemperatureDetail(Resource):
         """
         beer = beer_repository.list_beer_temperature_by_id(id)
         if beer is None:
-            return make_response(jsonify("Beer Temperature ID not found"), 404)
+            return make_response(jsonify("Beer Temperature ID not found"), http_utils.NOT_FOUND_HTTP_CODE_404)
         else:
             bs = beer_schema.BestBeerTemperatureSchemaAll()
             beer.average = (beer.max_best_temperature + beer.min_best_temperature) / 2
-            return make_response(bs.jsonify(beer), 200)
+            return make_response(bs.jsonify(beer), http_utils.OK_HTTP_CODE_200)
     
     def put(self,id):
         """
@@ -503,12 +503,12 @@ class BeerTemperatureDetail(Resource):
         id_best_beer_temperature = id
         beer = beer_repository.list_beer_temperature_by_id(id_best_beer_temperature)
         if beer is None:
-            return make_response(jsonify("Best Beer Temperature ID not found"), 404)
+            return make_response(jsonify("Best Beer Temperature ID not found"), http_utils.NOT_FOUND_HTTP_CODE_404)
         else:
             bs = beer_schema.BestBeerTemperatureSchemaAll()
             validate = bs.validate(request.json)
             if validate:
-                return make_response(jsonify(validate), 400)
+                return make_response(jsonify(validate), http_utils.BAD_REQUEST_HTTP_CODE_400)
             else:
                 try:
                     style_beer = request.json["style_beer"]
@@ -519,9 +519,9 @@ class BeerTemperatureDetail(Resource):
                     beer.max_best_temperature = max_best_temperature
                     beer.min_best_temperature = min_best_temperature
                     result = beer_temperature_service.update_beer_temperature(beer)
-                    return make_response(bs.jsonify(result), 200)
+                    return make_response(bs.jsonify(result), http_utils.OK_HTTP_CODE_200)
                 except Exception as e:
-                    return make_response("Check if the data was passed correctly or a bad code: " + str(e), 500)
+                    return make_response("Check if the data was passed correctly or a bad code: " + str(e), http_utils.SERVER_ERROR_HTTP_CODE_500)
 
     def delete(self,id):
         """
@@ -544,10 +544,10 @@ class BeerTemperatureDetail(Resource):
         id_best_beer_temperature = id
         beer = beer_repository.list_beer_temperature_by_id(id_best_beer_temperature)
         if beer is None:
-            return make_response(jsonify("Best Beer Temperature ID not found"), 404)
+            return make_response(jsonify("Best Beer Temperature ID not found"), http_utils.NOT_FOUND_HTTP_CODE_404)
         else:
             result = beer_temperature_service.delete_beer_temperature(beer)
-            return make_response('', 204)
+            return make_response('', http_utils.NO_CONTENT_HTTP_CODE_204)
 
 
 class BeerTemperaturePlaylistList(Resource):
@@ -595,7 +595,7 @@ class BeerTemperaturePlaylistList(Resource):
         temperature = request.json["temperature"]
         beer = beer_repository.list_beer_by_temperature(temperature)
         if beer is None:
-            return make_response(jsonify("Not found"), 404)
+            return make_response(jsonify("Not found"), http_utils.NOT_FOUND_HTTP_CODE_404)
         else:
             bts = beer_schema.BestBeerTemperatureSchemaOne(many=True)
             bts_json = bts.jsonify(beer)
@@ -604,7 +604,7 @@ class BeerTemperaturePlaylistList(Resource):
                 request_response = requests_handlers.request_spotify_service(beer_element["style_beer"])
                 related = request_response | beer_element
                 json_list.append(related)
-            return make_response(json_list,200)
+            return make_response(json_list,http_utils.OK_HTTP_CODE_200)
 
     
 
