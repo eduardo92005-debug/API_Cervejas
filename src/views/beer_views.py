@@ -110,8 +110,8 @@ class BeerList(Resource):
                     new_beer = beer_entity.Beer(style_beer, id_best_beer_temperature)
                     result = beer_service.insert_beer(new_beer)
                     return make_response(bs.jsonify(result), 201)
-            except:
-                return make_response("Check if the data was passed correctly or a bad code", 500)
+            except Exception as e:
+                return make_response("Check if the data was passed correctly or a bad code: " + str(e), 500)
 
 
 
@@ -160,6 +160,66 @@ class BeerDetail(Resource):
             return make_response(bs.jsonify(beer), 200)
 
     def put(self, id):
+        """
+            Update a beer by id
+            ---
+            tags:
+                - beers
+            parameters:
+                - in: path
+                  name: id
+                  type: integer
+                  required: true
+                  description: The beer id
+                - in: body
+                  name: beers
+                  description: The beer to update
+                  schema:
+                    id: beer
+                    properties:
+                        style_beer:
+                            type: string
+                            description: The beer style
+                        id_best_beer_temperature:
+                            type: integer
+                            description: The beer best temperature id
+            responses:
+                200:
+                    description: The beer was updated
+                    schema:
+                        id: beer
+                        properties:
+                            id_beer:
+                                type: integer
+                                description: The beer id
+                            style_beer:
+                                type: string
+                                description: The beer style
+                            id_best_beer_temperature:
+                                type: integer
+                                description: The beer best temperature id
+                            created_at:
+                                type: string
+                                description: The beer creation date
+                            updated_at:
+                                type: string
+                                description: The beer update date
+                400:
+                    description: The beer was not updated
+                    schema:
+                        id: error
+                        properties:
+                            style_beer:
+                                type: string
+                                description: The beer style
+                            id_best_beer_temperature:
+                                type: integer
+                                description: The beer best temperature id
+                404:
+                    description: The beer was not found
+                500:
+                    description: The beer was not updated, internal server error
+        """
         beer = beer_repository.list_beer_by_id(id)
         if beer is None:
             return make_response(jsonify("Beer ID not found"), 404)
