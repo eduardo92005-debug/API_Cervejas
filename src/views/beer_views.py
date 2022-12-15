@@ -1,6 +1,7 @@
 from flask_restful import Resource
 from flask import jsonify, make_response, request
 from src import api
+import html
 from ..handlers import requests_handlers
 from ..repositories import beer_repository
 from ..schemas import beer_schema
@@ -606,10 +607,15 @@ class BeerTemperaturePlaylistList(Resource):
                 json_list.append(related)
             return make_response(json_list,http_utils.OK_HTTP_CODE_200)
 
+class Index(Resource):
+    def get(self):
+        return make_response(jsonify("Welcome to Cervejas API"), http_utils.OK_HTTP_CODE_200)
+
+
     
 
 
-
+api.add_resource(Index, '/')
 api.add_resource(BeerList, '/beers')
 api.add_resource(BeerDetail, '/beers/<int:id>')
 api.add_resource(BeerTemperaturePlaylistList, '/beers/temperature/playlist')
