@@ -2,9 +2,9 @@
 
 A Cervejas API disponibiliza uma API RESTFUL que permite recomendar uma cerveja e uma playlist de acordo com uma temperatura dada.
 
-## Recursos 
-- [Listar todas as cervejas no banco](#Listar)
-- Detalhar uma cerveja do banco.
+## Recursos
+- [Listar todas as cervejas no banco](#listar-todas-cervejas)
+- [Detalhar uma cerveja no banco](#detalhar-uma-cerveja)
 - Listar as temperaturas associadas as cervejas no banco.
 - Detalhar uma temperatura.
 - Consultar uma playlist recomendada dada uma temperatura
@@ -24,7 +24,6 @@ Requisicoes para API devem estar no padrao:
 | GET    | Retorna informações de um ou mais registros.  |
 | POST    | Cria um novo registro.  |
 | PUT    | Atualiza completamente um registro. |
-| PATCH    | Atualiza parcialmente um registro. |
 | DELETE    | Deleta um registro.  |
 
 ## Respostas
@@ -39,7 +38,7 @@ Requisicoes para API devem estar no padrao:
 | 500  | Erro interno de servidor. |
 
 
-## Listar
+## Endpoints
 ### Listar TODAS cervejas
 Exibe todas as cervejas inseridas no banco.
 
@@ -49,3 +48,27 @@ Exibe todas as cervejas inseridas no banco.
 Exibe uma cerveja inserida no banco.
 
 ``` GET /beers/1 ```
+
+### Listar TODAS temperaturas
+Exibe todas as temperaturas que estao associadas as cervejas.
+
+``` GET /beers/temperature```
+
+### Detalhar uma temperatura
+Exibe uma temperatura especifica.
+
+``` GET /beers/temperature/1```
+
+### Recomenda uma playlist e tipos de cervejas
+Exibe uma recomendacao de tipo de cerveja e playlist para uma dada temperatura
+
+``` GET /beers/temperature/playlist```
+#### Request Body
+```json 
+{
+  temperature: 7
+}
+```
+
+
+
