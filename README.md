@@ -88,6 +88,6 @@ seguir os passos abaixo:
 * Os inserts de exemplo para adicionar no banco de dados para teste, esta no arquivo comandos gerais.
 * Execute agora o arquivo python run_test, verifique se os testes passaram, se sim, execute o run.py
 * Execute tambem o run.py do API_Playlist
-* 
+* Pronto, agora so usar.
 
 
