@@ -29,7 +29,7 @@ from BestTemperatureBeers btb group by id_best_beer_temperature ;
 
 
 SELECT * FROM (SELECT *, (sum(min_best_temperature+max_best_temperature))/2 AS average
-from BestTemperatureBeers btb group by id_best_beer_temperature) t where average = 1.5 order by style_beer desc;
+from BestTemperatureBeers btb group by id_best_beer_temperature) t order by style_beer desc;
 
 
 export FLASK_APP=src.py

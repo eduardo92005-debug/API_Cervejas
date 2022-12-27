@@ -603,8 +603,8 @@ class BeerTemperaturePlaylistList(Resource):
             json_list = []
             for beer_element in bts_json.json:
                 request_response = requests_handlers.request_spotify_service(beer_element["style_beer"])
-                related = request_response | beer_element
-                json_list.append(related)
+                request_response['style_beer'] = beer_element['style_beer']
+                json_list.append(request_response)
             return make_response(json_list,http_utils.OK_HTTP_CODE_200)
 
 class Index(Resource):
